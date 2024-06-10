@@ -5,12 +5,23 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 const dotenv = require("dotenv").config();
+const cors = require('cors');
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var vehicleRouter = require('./routes/vehicles');
+var usersRouter = require('./routes/users')
 
 var app = express();
+
+const corsOptions = {
+  origin: 'http://localhost:4200/',
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors());
+
 
 var mongoose = require("mongoose");
 mongoose.connect(process.env.MONGODB).then(() => console.log('Connected to MongoDB/autos'))
@@ -28,6 +39,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/vehicles', vehicleRouter);
+app.use('/users', usersRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

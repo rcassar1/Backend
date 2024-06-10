@@ -1,16 +1,24 @@
 const { Vehicle } = require("../models/vehicles");
 const StringValidationHelper = require("../helpers/string_validation_helper");
 const { error } = require("console");
+const { response } = require("../app");
 const Dao = Vehicle;
 const validationHelper = new StringValidationHelper();
 class VehicleService {
   async findById(id) {
     return await Dao.findById(id);
   }
+
+  async count(){
+    var response = Dao.length;
+    return Dao.length;
+  }
+
   async get(skip, take) {
     var temp = await Dao.find({}).skip(skip).limit(take);
     return temp;
   }
+  
   async create(vehicle) {
     var validation = this.validation(vehicle);
     if (validation.valid) {
@@ -57,6 +65,13 @@ class VehicleService {
       }
 
     };
+
+    async getFeaturedItems() {
+      const featuredItems = await Vehicle.find({ featured: true });
+      return featuredItems;
+    };
+  
+
 
   validation(vehicle) {
     var result = { valid: false, message: "" };
