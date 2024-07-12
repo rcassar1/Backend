@@ -11,7 +11,6 @@ const cors = require('cors');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var vehicleRouter = require('./routes/vehicles');
-var usersRouter = require('./routes/users')
 
 var app = express();
 
@@ -22,9 +21,11 @@ const corsOptions = {
 
 app.use(cors());
 
-
 var mongoose = require("mongoose");
-mongoose.connect(process.env.MONGODB).then(() => console.log('Connected to MongoDB/autos'))
+mongoose.connect('mongodb://localhost:27017/autos').then(() => console.log('Connected to MongoDB/autos'))
+
+console.log(process.env.MONGODB)
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,9 +38,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use("/images", express.static(path.join("images")));
 app.use('/users', usersRouter);
 app.use('/vehicles', vehicleRouter);
-app.use('/users', usersRouter);
+
 
 
 

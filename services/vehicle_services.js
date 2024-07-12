@@ -2,6 +2,8 @@ const { Vehicle } = require("../models/vehicles");
 const StringValidationHelper = require("../helpers/string_validation_helper");
 const { error } = require("console");
 const { response } = require("../app");
+
+
 const Dao = Vehicle;
 const validationHelper = new StringValidationHelper();
 class VehicleService {
@@ -29,34 +31,31 @@ class VehicleService {
     }
   }
   async update(vehicle) {
-    var validation = this.validation(vehicle);
-    if (validation.valid) {
-      var updateResult = await Dao.updateOne(
+       var vehicle = await Dao.updateOne(
         {
           _id: vehicle._id,
         },
         {
           make: vehicle.make,
           model: vehicle.model,
+          kms: vehicle.kms,
+          colour: vehicle.colour,
+          featured: vehicle.featured,
+          PhotoUrl: vehicle.PhotoUrl,
+          price: vehicle.price,
+          year: vehicle.year,
+          
         }
       );
-      if (updateResult.acknowledged == false) {
-        return {
-          success: false,
-          message: "Something went wrong",
-        };
-      }
       return { success: true };
-    } else {
-      return { success: false, message: validation.message };
     }
-  }
+  
 
   async delete(id) {
              var deleteResult = await Dao.deleteOne({_id: id})
-      if (deleteResult.acknowledged == false) {
+      if (deleteResult.acknowledged == true) {
         return{
-          success: false,
+          success: true,
           message: "Something went south",
         };
       } else {
@@ -93,7 +92,7 @@ class VehicleService {
     }
     if (errors.length > 0) {
       result.message = errors.join(",\r\n ");
-      return result;
+      return {valid: true};
     } else return { valid: true };
   }
 }

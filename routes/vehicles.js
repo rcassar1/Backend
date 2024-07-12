@@ -5,7 +5,33 @@ var router = express.Router();
 const vehicleService = require("../services/vehicle_services");
 const {response} = require("../app");
 const { Vehicle } = require("../models/vehicles");
+const { ObjectId } = require("mongoose/lib/types");
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+      cb(null, 'images/'); 
+    },
+    filename: function(req, file, cb) {
+      cb(null, Date.now() + '-' + file.originalname);
+    }
+  });
 const service = new vehicleService();
+
+const upload = multer({ storage: storage });
+
+
+router.post('/image', upload.single('photo'), async function(req, res) {
+
+  try {
+      const serverUrl = 'http://localhost:4000'
+      let filePath = req.file ? req.file.path : null;
+      let photoUrl = filePath ? `${serverUrl}/${filePath}` : null;
+      res.status(201).json({photoUrl:photoUrl});
+  } catch (error) {
+    res.status(500).json({ message: 'Internal Server Error', error });
+  }
+});
+
 
 /* GET users listing */
 router.get("/id/:id", async function (req, res, next) {
@@ -43,7 +69,8 @@ router.get("/count", async function (req, res) {
 
 
 router.post("/add", async function(req, res) {
-    var payload = req.body();
+    
+    var payload = req.body;
     var result = await service.create(payload);
     if (result.success) {
         res.send(201);
@@ -55,11 +82,27 @@ router.post("/add", async function(req, res) {
     }
 });
 
-router.post("/update", async function(req, res) {
+router.post("/update/:id", async function(req, res) {
+    const { id } = req.params;
     var payload = req.body;
-    var result = await service.update(payload);
+    const { make, model, kms, colour, featured } = payload
+
+    const vehicle = await Vehicle.findById(id);
+    if(!vehicle){
+        return res.status(404).send({message: 'Vehicle not found'})
+    }
+
+    vehicle.make = make;
+    vehicle.model = model;
+    vehicle.kms = kms;
+    vehicle.colour = colour;
+    vehicle.featured = featured;
+    var result = await vehicle.save();
     if (result.success) {
         res.send(201);
+        console.log(result);
+        console.log(payload);
+
               
     } else {
         res.send(400, {

@@ -1,4 +1,6 @@
 const{Schema, model} = require("mongoose");
+const { ObjectId } = require("mongoose/lib/types");
+ 
 
 const vehiclesSchema = new Schema ({
     make: {type: String},
@@ -6,7 +8,7 @@ const vehiclesSchema = new Schema ({
     kms: {type: Number},
     colour: {type: String},
     featured: {type: Boolean},
-    PhotoUrl: {type:String},
+    photoUrl: {type:String},
     price: {type: Number},
     year: {type: Number},
 });
