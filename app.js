@@ -15,11 +15,11 @@ var vehicleRouter = require('./routes/vehicles');
 var app = express();
 
 const corsOptions = {
-  origin: 'http://localhost:4200/',
+  origin: '*',
   optionsSuccessStatus: 200,
 };
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 var mongoose = require("mongoose");
 mongoose.connect('mongodb://localhost:27017/autos').then(() => console.log('Connected to MongoDB/autos'))

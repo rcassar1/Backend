@@ -1,17 +1,16 @@
-const { Users } = require("../models/vehicles");
+const { Users } = require("../models/users");
 const StringValidationHelper = require("../helpers/string_validation_helper");
 const { error } = require("console");
 const { response } = require("../app");
-const { use } = require("../routes");
+
 const Dao = Users;
 const validationHelper = new StringValidationHelper();
 class UserService {
-
   async findById(id) {
     return await Dao.findById(id);
   }
 
-  async count(){
+  async count() {
     var response = Dao.length;
     return Dao.length;
   }
@@ -20,9 +19,9 @@ class UserService {
     var temp = await Dao.find({}).skip(skip).limit(take);
     return temp;
   }
-  
+
   async create(user) {
-    var validation = this.validation(vehicle);
+    var validation = { valid: true };
     if (validation.valid) {
       await Dao.create(user);
       return { success: true };
@@ -58,19 +57,16 @@ class UserService {
   }
 
   async delete(id) {
-             var deleteResult = await Dao.deleteOne({_id: id})
-      if (deleteResult.acknowledged == false) {
-        return{
-          success: false,
-          message: "Something went south",
-        };
-      } else {
-        return {success: false };
-        
-      }
-
-    };
-
+    var deleteResult = await Dao.deleteOne({ _id: id });
+    if (deleteResult.acknowledged == false) {
+      return {
+        success: false,
+        message: "Something went south",
+      };
+    } else {
+      return { success: false };
+    }
+  }
 
   validation(user) {
     var result = { valid: false, message: "" };
@@ -96,4 +92,4 @@ class UserService {
     } else return { valid: true };
   }
 }
-module.exports = UserService;
+module.exports = {UserService};
